@@ -1,0 +1,96 @@
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 8px 0 14px;
+  background: linear-gradient(135deg, #51cf66 0%, #2f9e44 100%);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: default;
+}
+
+.titlebar-logo {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
+  flex-shrink: 0;
+}
+
+.titlebar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.3px;
+  cursor: default;
+}
+
+.titlebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.titlebar-search {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 16px;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 12px;
+  outline: none;
+  width: 140px;
+  transition: width 0.2s, background 0.2s;
+}
+
+.titlebar-search::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+.titlebar-search:focus {
+  background: rgba(255,255,255,0.3);
+  width: 160px;
+}
+
+.titlebar-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.titlebar-btn:hover {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+.titlebar-btn.active {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+
+.titlebar-btn.close-btn:hover {
+  background: #e53e3e;
+  color: #fff;
+}
+
+.titlebar-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(255,255,255,0.3);
+  margin: 0 4px;
+}

@@ -1,0 +1,58 @@
+# ─── Dependencies ────────────────────────────
+node_modules
+
+# ─── Build output ──────────────────────────────
+dist
+dist-ssr
+build
+
+# Local Cargo mirror/proxy config (machine-specific)
+.cargo/config.toml
+
+# Tauri Rust build artifacts
+src-tauri/target/
+
+# Tauri auto-generated schemas (regenerated on `tauri build` / `tauri dev`)
+src-tauri/gen/
+
+# Auto-generated platform icons (source icons in src-tauri/icons/ root are committed)
+src-tauri/icons/android/
+src-tauri/icons/ios/
+src-tauri/icons/Square*.png
+src-tauri/icons/StoreLogo.png
+
+# ─── Dev tooling ──────────────────────────────
+# Vite dev server cache
+.vite/
+
+# Local env files (secrets / API keys / overrides)
+.env
+.env.*
+*.local
+
+# ─── OS junk ────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# ─── Logs ────────────────────────────────────
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ─── Editor config ───────────────────────────
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

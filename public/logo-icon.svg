@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#51cf66"/>
+      <stop offset="100%" stop-color="#2f9e44"/>
+    </linearGradient>
+    <filter id="s">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.25)"/>
+    </filter>
+  </defs>
+  <g filter="url(#s)" transform="rotate(-3,32,32)">
+    <path d="M8 6 L56 6 L56 48 L44 60 L8 60 Z" fill="#fffde7"/>
+    <path d="M8 6 L56 6 L56 20 L8 20 Z" fill="url(#g1)"/>
+    <path d="M44 60 L56 48 L44 48 Z" fill="#e0d87a"/>
+    <line x1="13" y1="28" x2="50" y2="28" stroke="#f0e68c" stroke-width="1.5"/>
+    <line x1="13" y1="34" x2="50" y2="34" stroke="#f0e68c" stroke-width="1.5"/>
+    <line x1="13" y1="40" x2="42" y2="40" stroke="#f0e68c" stroke-width="1.5"/>
+    <g transform="translate(32,13) rotate(-40)">
+      <rect x="-2.5" y="-7" width="5" height="11" rx="1" fill="white" opacity="0.95"/>
+      <polygon points="-2.5,4 2.5,4 0,8" fill="#ffd54f"/>
+      <rect x="-2.5" y="-9.5" width="5" height="3" rx="1" fill="#f48fb1"/>
+      <rect x="-2.5" y="-7" width="5" height="1.5" fill="#bdbdbd"/>
+    </g>
+  </g>
+</svg>
