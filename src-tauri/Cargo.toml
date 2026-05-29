@@ -1,8 +1,8 @@
 [package]
 name = "quick-note"
-version = "0.1.0"
-description = "A sticky notes app"
-authors = ["you"]
+version = "0.1.1"
+description = "QuickNote - A sticky notes app by SHAO Liming"
+authors = ["SHAO Liming <lmshao@163.com>"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

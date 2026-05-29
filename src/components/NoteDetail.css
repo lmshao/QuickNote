@@ -108,6 +108,16 @@
   color: #bbb;
 }
 
+/* ─── Credit ───────────────────────────────── */
+.note-detail-credit {
+  text-align: right;
+  padding: 4px 14px 6px;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.2);
+  user-select: none;
+  flex-shrink: 0;
+}
+
 /* ─── Empty placeholder ─────────────────────── */
 .note-detail-empty {
   display: flex;

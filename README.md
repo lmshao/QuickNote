@@ -8,7 +8,7 @@
   </p>
 
   [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-  [![Version](https://img.shields.io/badge/version-0.1.0-blue)]
+  ![Version](https://img.shields.io/badge/version-0.1.1-blue)
   [![Tauri](https://img.shields.io/badge/Tauri-2-green)](https://tauri.app/)
   [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
@@ -18,7 +18,7 @@
 
 ## 📸 预览
 
-> 🖼️ 截图待添加 — 运行 `npm run tauri dev` 即可体验
+![QuickNote 截图](screenshot.png)
 
 ---
 
@@ -80,67 +80,7 @@ npm run tauri build
 
 ---
 
-## 📁 项目结构
-
-```
-quick-note/
-├── public/                     # 静态资源（图标、字体等）
-│   └── logo-icon.svg
-├── scripts/                    # PowerShell 辅助脚本
-│   ├── dev.ps1
-│   ├── build.ps1
-│   └── clean.ps1
-├── src/                        # 前端源代码
-│   ├── components/
-│   │   ├── AddNoteModal.tsx     # 新建便签弹窗
-│   │   ├── NoteCard.tsx         # 便签卡片组件
-│   │   └── TitleBar.tsx         # 自定义标题栏
-│   ├── hooks/
-│   │   └── useNotes.ts          # 便签状态管理（CRUD + 排序）
-│   ├── types.ts                 # 类型定义 + 配色表
-│   ├── App.tsx                  # 主应用布局
-│   ├── App.css                  # 全局样式
-│   └── main.tsx                 # 入口文件
-├── src-tauri/                   # Rust 后端
-│   ├── icons/                   # 应用图标
-│   ├── src/
-│   │   ├── lib.rs               # Tauri 命令（minimize/close/always_on_top）
-│   │   └── main.rs              # 程序入口
-│   ├── tauri.conf.json          # Tauri 配置
-│   └── capabilities/            # 权限声明
-├── .gitignore
-├── index.html                   # Vite HTML 入口
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── LICENSE                      # MIT 许可
-└── README.md                    # 👈 就是本文件
-```
-
----
-
-## ⌨️ 快捷键
-
-| 按键 | 作用域 | 操作 |
-|------|--------|------|
-| `Ctrl+Enter` | 新建弹窗 | 快速添加便签 |
-| `Esc` | 弹窗 / 编辑 | 取消 / 退出编辑 |
-
----
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-1. Fork 本仓库
-2. 创建功能分支：`git checkout -b feat/my-feature`
-3. 提交变更：`git commit -m "feat: add awesome feature"`
-4. 推送分支：`git push origin feat/my-feature`
-5. 提交 Pull Request
-
----
-
-## 📄 许可证
+##  许可证
 
 本项目基于 [MIT](LICENSE) 许可证开源。
 

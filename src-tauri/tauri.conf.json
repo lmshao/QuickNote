@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "QuickNote",
-  "version": "0.1.0",
-  "identifier": "com.quicknote.app",
+  "version": "0.1.1",
+  "identifier": "com.lmshao.quicknote",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",

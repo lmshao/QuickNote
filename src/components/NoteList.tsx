@@ -1,4 +1,4 @@
-import type { Note, NoteColor } from "../types";
+import type { Note } from "../types";
 import { NOTE_COLORS } from "../types";
 import "./NoteList.css";
 

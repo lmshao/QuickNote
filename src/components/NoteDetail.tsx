@@ -134,6 +134,8 @@ export default function NoteDetail({
         onKeyDown={handleKeyDown}
         placeholder="写点什么…"
       />
+
+      <div className="note-detail-credit">Made by SHAO Liming</div>
     </div>
   );
 }

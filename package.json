@@ -1,7 +1,9 @@
 {
   "name": "quick-note",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "author": "SHAO Liming <lmshao@163.com>",
+  "description": "A sticky notes app by SHAO Liming",
   "type": "module",
   "scripts": {
     "dev": "vite",
