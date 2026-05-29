@@ -11,6 +11,7 @@ interface TitleBarProps {
 export default function TitleBar({ onSearch, onAdd }: TitleBarProps) {
   const [pinned, setPinned] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   const handleMinimize = () => invoke("minimize_window");
   const handleClose = () => invoke("close_window");
@@ -22,38 +23,54 @@ export default function TitleBar({ onSearch, onAdd }: TitleBarProps) {
   };
 
   const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
-    // 只响应左键，且目标元素本身是拖动区域（不是按钮/输入框）
     if (e.button !== 0) return;
     const tag = (e.target as HTMLElement).tagName.toLowerCase();
     if (tag === "button" || tag === "input" || tag === "img") return;
     getCurrentWindow().startDragging();
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+    onSearch(e.target.value);
+  };
+
+  const handleSearchBlur = () => {
+    // Keep search visible if there's a query
+    if (!searchValue) {
+      setSearchVisible(false);
+    }
+  };
+
   return (
     <div className="titlebar" onMouseDown={handleDragStart}>
       <div className="titlebar-left">
-        <img className="titlebar-logo" src="/logo-icon.svg" alt="QuickNote" />
-        <span className="titlebar-title">QuickNote</span>
+        <span className="titlebar-title">便笺</span>
       </div>
 
-      <div className="titlebar-actions">
+      <div className="titlebar-center">
         {searchVisible && (
           <input
             className="titlebar-search"
             autoFocus
             placeholder="搜索便签…"
-            onChange={(e) => onSearch(e.target.value)}
-            onBlur={() => {
-              setSearchVisible(false);
-              onSearch("");
-            }}
+            value={searchValue}
+            onChange={handleSearchChange}
+            onBlur={handleSearchBlur}
           />
         )}
+      </div>
 
+      <div className="titlebar-actions">
         <button
           className="titlebar-btn"
           title="搜索"
-          onClick={() => setSearchVisible((v) => !v)}
+          onClick={() => {
+            setSearchVisible((v) => !v);
+            if (searchVisible) {
+              setSearchValue("");
+              onSearch("");
+            }
+          }}
         >
           🔍
         </button>

@@ -1,0 +1,114 @@
+.note-list {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: #e6c300 transparent;
+}
+
+.note-list::-webkit-scrollbar {
+  width: 4px;
+}
+.note-list::-webkit-scrollbar-thumb {
+  background: #e6c300;
+  border-radius: 4px;
+}
+
+/* ─── Empty ─────────────────────────────────── */
+.note-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 6px;
+  color: #bbb;
+}
+.note-list-empty-icon {
+  font-size: 36px;
+  opacity: 0.4;
+}
+.note-list-empty p {
+  font-size: 13px;
+}
+.note-list-empty-hint {
+  font-size: 11px;
+  color: #ccc;
+}
+
+/* ─── List item ──────────────────────────────── */
+.note-list-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px 14px 12px 12px;
+  border-left: 4px solid #ffe066;
+  cursor: pointer;
+  transition: background 0.12s;
+  position: relative;
+}
+
+.note-list-item:hover {
+  background: rgba(255, 224, 102, 0.25);
+}
+
+.note-list-item.selected {
+  background: rgba(255, 224, 102, 0.35);
+}
+
+.note-list-item + .note-list-item {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.note-list-item-top {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.note-list-item-title {
+  font-size: 13px;
+  color: #2d2d2d;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.note-list-pin {
+  margin-right: 3px;
+  font-size: 11px;
+}
+
+.note-list-item-date {
+  font-size: 11px;
+  color: #999;
+  flex-shrink: 0;
+}
+
+.note-list-del-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: opacity 0.12s, background 0.12s;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.note-list-item:hover .note-list-del-btn {
+  opacity: 0.4;
+}
+
+.note-list-del-btn:hover {
+  opacity: 1 !important;
+  background: rgba(229, 62, 62, 0.15);
+}
