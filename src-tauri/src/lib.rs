@@ -17,6 +17,7 @@ fn toggle_always_on_top(window: tauri::Window, on_top: bool) {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_sql::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             minimize_window,
             close_window,

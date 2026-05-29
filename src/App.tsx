@@ -6,7 +6,7 @@ import { useNotes } from "./hooks/useNotes";
 import "./App.css";
 
 export default function App() {
-  const { notes, addNote, updateNote, deleteNote, togglePin, changeColor } = useNotes();
+  const { notes, loaded, addNote, updateNote, deleteNote, togglePin, changeColor } = useNotes();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newNoteId, setNewNoteId] = useState<string | null>(null);
@@ -49,27 +49,36 @@ export default function App() {
       />
 
       <div className="app-split">
-        {/* Left: note list */}
-        <aside className="app-sidebar">
-          <NoteList
-            notes={filteredNotes}
-            selectedId={selectedId}
-            onSelect={handleSelect}
-            onDelete={handleDelete}
-          />
-        </aside>
+        {!loaded ? (
+          <div className="app-loading">
+            <span className="app-loading-icon">📝</span>
+            <p>加载中…</p>
+          </div>
+        ) : (
+          <>
+            {/* Left: note list */}
+            <aside className="app-sidebar">
+              <NoteList
+                notes={filteredNotes}
+                selectedId={selectedId}
+                onSelect={handleSelect}
+                onDelete={handleDelete}
+              />
+            </aside>
 
-        {/* Right: note detail */}
-        <main className="app-detail">
-          <NoteDetail
-            note={selectedNote}
-            isNew={newNoteId === selectedId}
-            onUpdate={updateNote}
-            onDelete={handleDelete}
-            onTogglePin={togglePin}
-            onChangeColor={changeColor}
-          />
-        </main>
+            {/* Right: note detail */}
+            <main className="app-detail">
+              <NoteDetail
+                note={selectedNote}
+                isNew={newNoteId === selectedId}
+                onUpdate={updateNote}
+                onDelete={handleDelete}
+                onTogglePin={togglePin}
+                onChangeColor={changeColor}
+              />
+            </main>
+          </>
+        )}
       </div>
     </div>
   );
