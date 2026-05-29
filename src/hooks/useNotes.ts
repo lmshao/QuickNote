@@ -42,7 +42,7 @@ export function useNotes() {
   useEffect(() => {
     (async () => {
       const d = await getDb();
-      const rows = await d.select(
+      const rows: any[] = await d.select(
         "SELECT * FROM notes ORDER BY pinned DESC, updated_at DESC"
       );
       setNotes(rows.map(rowToNote));
@@ -90,7 +90,7 @@ export function useNotes() {
   const togglePin = useCallback(async (id: string) => {
     const d = await getDb();
     // Toggle: read current value first
-    const rows = await d.select("SELECT pinned FROM notes WHERE id = $1", [id]);
+    const rows: any[] = await d.select("SELECT pinned FROM notes WHERE id = $1", [id]);
     if (rows.length === 0) return;
     const newPinned = rows[0].pinned === 1 ? 0 : 1;
     await d.execute("UPDATE notes SET pinned = $1 WHERE id = $2", [newPinned, id]);

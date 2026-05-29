@@ -30,8 +30,8 @@ export default function App() {
   }, [deleteNote]);
 
   // Add a new blank note and open it for editing
-  const handleAdd = useCallback(() => {
-    const note = addNote("", "yellow");
+  const handleAdd = useCallback(async () => {
+    const note = await addNote("", "yellow");
     setSelectedId(note.id);
     setNewNoteId(note.id);
   }, [addNote]);
