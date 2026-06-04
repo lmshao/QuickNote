@@ -6,9 +6,18 @@ import "./TitleBar.css";
 interface TitleBarProps {
   onSearch: (q: string) => void;
   onAdd: () => void;
+  onOpenAuth: () => void;
+  onLogout: () => void;
+  authDisplayName: string | null;
 }
 
-export default function TitleBar({ onSearch, onAdd }: TitleBarProps) {
+export default function TitleBar({
+  onSearch,
+  onAdd,
+  onOpenAuth,
+  onLogout,
+  authDisplayName,
+}: TitleBarProps) {
   const [pinned, setPinned] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -78,6 +87,20 @@ export default function TitleBar({ onSearch, onAdd }: TitleBarProps) {
         <button className="titlebar-btn" title="新建便签" onClick={onAdd}>
           ✚
         </button>
+
+        <button
+          className={`titlebar-btn ${authDisplayName ? "active" : ""}`}
+          title={authDisplayName ? `Signed in as ${authDisplayName}` : "Sign in"}
+          onClick={onOpenAuth}
+        >
+          👤
+        </button>
+
+        {authDisplayName && (
+          <button className="titlebar-btn" title="Sign out" onClick={onLogout}>
+            ⇥
+          </button>
+        )}
 
         <button
           className={`titlebar-btn ${pinned ? "active" : ""}`}

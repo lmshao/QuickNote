@@ -3,13 +3,17 @@ import TitleBar from "./components/TitleBar";
 import NoteList from "./components/NoteList";
 import NoteDetail from "./components/NoteDetail";
 import { useNotes } from "./hooks/useNotes";
+import { useAuth } from "./hooks/useAuth";
+import AuthModal from "./components/AuthModal";
 import "./App.css";
 
 export default function App() {
   const { notes, loaded, addNote, updateNote, deleteNote, togglePin, changeColor } = useNotes();
+  const auth = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newNoteId, setNewNoteId] = useState<string | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const filteredNotes = useMemo(() => {
     if (!searchQuery.trim()) return notes;
@@ -46,6 +50,9 @@ export default function App() {
       <TitleBar
         onSearch={setSearchQuery}
         onAdd={handleAdd}
+        onOpenAuth={() => setAuthModalOpen(true)}
+        onLogout={auth.logout}
+        authDisplayName={auth.user?.nickname ?? null}
       />
 
       <div className="app-split">
@@ -80,6 +87,25 @@ export default function App() {
           </>
         )}
       </div>
+
+      <AuthModal
+        open={authModalOpen}
+        providers={auth.providers}
+        providersLoading={auth.providersLoading}
+        submitting={auth.submitting}
+        error={auth.error}
+        apiBaseUrl={auth.apiBaseUrl}
+        defaultApiBaseUrl={auth.defaultApiBaseUrl}
+        currentUsername={auth.user?.nickname ?? null}
+        onClose={() => setAuthModalOpen(false)}
+        onLogin={auth.login}
+        onRegister={auth.register}
+        onLogout={auth.logout}
+        onUpdateApiBaseUrl={auth.updateApiBaseUrl}
+        onUseDefaultApiBaseUrl={auth.useDefaultApiBaseUrl}
+        onTestApiBaseUrl={auth.testApiBaseUrl}
+        onClearError={auth.clearError}
+      />
     </div>
   );
 }

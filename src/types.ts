@@ -15,6 +15,20 @@ export interface Note {
   pinned: boolean;
 }
 
+export interface AuthUser {
+  id: string;
+  nickname: string;
+  avatarUrl: string;
+  email: string | null;
+  phone: string | null;
+  createdAt: number;
+}
+
+export interface AuthProviders {
+  local: boolean;
+  wechat: boolean;
+}
+
 export const NOTE_COLORS: Record<NoteColor, { bg: string; header: string; label: string }> = {
   yellow: { bg: "#fffce8", header: "#ffe066", label: "黄色" },
   green:  { bg: "#ebfbee", header: "#8ce99a", label: "薄荷" },

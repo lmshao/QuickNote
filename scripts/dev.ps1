@@ -31,14 +31,32 @@ Write-Title "[ 2/3 ] Checking npm dependencies..."
 
 Set-Location $Root
 
+function Ensure-TauriCli {
+    $tauriCmd = Join-Path $Root "node_modules\.bin\tauri.cmd"
+    if (-not (Test-Path $tauriCmd)) {
+        Write-Step "Tauri CLI not found, installing dev dependencies..."
+        npm install --include=dev
+        if ($LASTEXITCODE -ne 0) { Write-Fail "npm install --include=dev failed"; exit 1 }
+    }
+
+    if (-not (Test-Path $tauriCmd)) {
+        Write-Fail "Tauri CLI is still missing (node_modules\\.bin\\tauri.cmd)."
+        Write-Fail "Please check @tauri-apps/cli in devDependencies and npm install logs."
+        exit 1
+    }
+}
+
 if (-not (Test-Path "node_modules")) {
-    Write-Step "node_modules not found, running npm install..."
-    npm install
+    Write-Step "node_modules not found, running npm install --include=dev..."
+    npm install --include=dev
     if ($LASTEXITCODE -ne 0) { Write-Fail "npm install failed"; exit 1 }
     Write-Ok "Dependencies installed"
 } else {
     Write-Ok "node_modules already present"
 }
+
+Ensure-TauriCli
+Write-Ok "Tauri CLI ready"
 
 # ── 3. Start dev server ──────────────────────────────────────────────────────
 Write-Title "[ 3/3 ] Starting Tauri dev server..."
@@ -46,4 +64,4 @@ Write-Step "Vite dev server  -> http://localhost:1420"
 Write-Step "Rust will compile on first run (may take ~1 min)"
 Write-Host ""
 
-npm run tauri dev
+& (Join-Path $Root "node_modules\.bin\tauri.cmd") dev
