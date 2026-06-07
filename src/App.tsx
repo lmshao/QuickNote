@@ -16,6 +16,8 @@ export default function App() {
   }>) => void>(() => {});
 
   const onAfterChange = useCallback((note: import("./types").Note) => {
+    // Conflict copies are local-only — never push them to server
+    if (note.content.startsWith("⚠ 冲突副本")) return;
     syncPushRef.current([{
       id: note.id,
       content: note.content,
@@ -63,9 +65,9 @@ export default function App() {
 
   // Sync selection when the selected note is deleted
   const handleDelete = useCallback((id: string) => {
-    // Push deletion to server before removing locally
     const note = notes.find((n) => n.id === id);
-    if (note) {
+    // Push deletion to server — skip conflict copies (never on server)
+    if (note && !note.content.startsWith("⚠ 冲突副本")) {
       syncPushRef.current([{
         id: note.id,
         content: note.content,
