@@ -97,9 +97,9 @@ export function useSync(
           if (remote.deleted) {
             await deleteNoteLocal(remote.id);
           } else {
-            // Pull-side conflict detection: if local was also modified since last sync
+            // Pull-side conflict detection: skip on initial sync (since===0)
             const local = getLocalNote(remote.id);
-            if (local && local.updatedAt > since && local.content !== remote.content) {
+            if (since > 0 && local && local.updatedAt > since && local.content !== remote.content) {
               // Both sides changed — preserve local as conflict copy
               const conflict = buildConflictNote(local);
               await insertNoteSilent(conflict);
