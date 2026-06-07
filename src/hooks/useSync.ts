@@ -72,6 +72,7 @@ export function useSync(
         }
       }
 
+      storeSince(Date.now());
       setLastSyncAt(Date.now());
       setSyncStatus("idle");
     } catch (err) {
@@ -166,6 +167,9 @@ export function useSync(
           }
         }
       }
+      // Update sync_since to prevent subsequent pull from re-fetching
+      // notes that were just pushed — avoids false conflict copies
+      storeSince(Date.now());
       setLastSyncAt(Date.now());
       setSyncStatus("idle");
     } catch (err) {
