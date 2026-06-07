@@ -154,3 +154,13 @@
   padding: 1px 7px;
   border-radius: 6px;
 }
+
+.note-conflict-badge {
+  font-size: 10px;
+  color: #d9480f;
+  font-weight: 600;
+  background: rgba(217, 72, 15, 0.12);
+  padding: 1px 7px;
+  border-radius: 6px;
+  margin-left: auto;
+}

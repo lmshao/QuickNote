@@ -93,3 +93,16 @@
   background: rgba(0, 0, 0, 0.15);
   margin: 0 4px;
 }
+
+.titlebar-btn.sync-btn {
+  font-size: 16px;
+}
+
+.titlebar-btn.sync-error {
+  color: #e53e3e;
+}
+
+.titlebar-btn.sync-error:hover {
+  background: rgba(229, 62, 62, 0.15);
+  color: #c53030;
+}

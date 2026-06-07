@@ -37,6 +37,7 @@ export default function NoteCard({
   const [showColors, setShowColors] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const colors = NOTE_COLORS[note.color];
+  const isConflictCopy = note.content.startsWith("⚠ 冲突副本");
 
   useEffect(() => {
     setDraft(note.content);
@@ -134,6 +135,7 @@ export default function NoteCard({
       <div className="note-footer">
         <span className="note-date">{formatDate(note.updatedAt)}</span>
         {note.pinned && <span className="note-pinned-badge">已固定</span>}
+        {isConflictCopy && <span className="note-conflict-badge" title="此便签为冲突副本，请检查内容并决定保留或删除">⚠ 冲突</span>}
       </div>
     </div>
   );

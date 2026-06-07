@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useState } from "react";
+import type { SyncStatus } from "../hooks/useSync";
 import "./TitleBar.css";
 
 interface TitleBarProps {
@@ -9,6 +10,9 @@ interface TitleBarProps {
   onOpenAuth: () => void;
   onLogout: () => void;
   authDisplayName: string | null;
+  syncStatus?: SyncStatus;
+  lastSyncAt?: number | null;
+  onSyncNow?: () => void;
 }
 
 export default function TitleBar({
@@ -17,6 +21,9 @@ export default function TitleBar({
   onOpenAuth,
   onLogout,
   authDisplayName,
+  syncStatus,
+  lastSyncAt,
+  onSyncNow,
 }: TitleBarProps) {
   const [pinned, setPinned] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
@@ -99,6 +106,21 @@ export default function TitleBar({
         {authDisplayName && (
           <button className="titlebar-btn" title="Sign out" onClick={onLogout}>
             ⇥
+          </button>
+        )}
+
+        {authDisplayName && syncStatus && (
+          <button
+            className={`titlebar-btn sync-btn ${syncStatus === "error" ? "sync-error" : ""}`}
+            title={
+              syncStatus === "pulling" ? "同步中…"
+                : syncStatus === "pushing" ? "上传中…"
+                : syncStatus === "error" ? "同步失败，点击重试"
+                : lastSyncAt ? `上次同步: ${new Date(lastSyncAt).toLocaleTimeString()}` : "点击同步"
+            }
+            onClick={onSyncNow}
+          >
+            {syncStatus === "pulling" || syncStatus === "pushing" ? "⟳" : "☁"}
           </button>
         )}
 

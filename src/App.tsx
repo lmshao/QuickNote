@@ -1,15 +1,50 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import TitleBar from "./components/TitleBar";
 import NoteList from "./components/NoteList";
 import NoteDetail from "./components/NoteDetail";
-import { useNotes } from "./hooks/useNotes";
+import { useNotes, type UseNotesCallbacks } from "./hooks/useNotes";
 import { useAuth } from "./hooks/useAuth";
+import { useSync } from "./hooks/useSync";
 import AuthModal from "./components/AuthModal";
 import "./App.css";
 
 export default function App() {
-  const { notes, loaded, addNote, updateNote, deleteNote, togglePin, changeColor } = useNotes();
+  // --- Sync push bridge: ref-based to break circular dep between useNotes ↔ useSync ---
+  const syncPushRef = useRef<(notes: Array<{
+    id: string; content: string; color: string; pinned: boolean;
+    updated_at: number; deleted: boolean;
+  }>) => void>(() => {});
+
+  const onAfterChange = useCallback((note: import("./types").Note) => {
+    syncPushRef.current([{
+      id: note.id,
+      content: note.content,
+      color: note.color,
+      pinned: note.pinned,
+      updated_at: note.updatedAt,
+      deleted: false,
+    }]);
+  }, []);
+
+  const callbacks: UseNotesCallbacks = useMemo(() => ({ onAfterChange }), [onAfterChange]);
+
+  const { notes, loaded, addNote, updateNote, deleteNote, togglePin, changeColor, importNote, insertNoteSilent } =
+    useNotes(callbacks);
   const auth = useAuth();
+
+  // Ref-based local note lookup for useSync (avoids stale closure on notes array)
+  const notesRef = useRef(notes);
+  notesRef.current = notes;
+  const getLocalNote = useCallback((id: string) => notesRef.current.find((n) => n.id === id), []);
+
+  const { syncStatus, lastSyncAt, pushNow, pullNow } = useSync(
+    auth.token ?? null,
+    importNote,
+    deleteNote,
+    insertNoteSilent,
+    getLocalNote,
+  );
+  syncPushRef.current = pushNow;
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newNoteId, setNewNoteId] = useState<string | null>(null);
@@ -28,10 +63,22 @@ export default function App() {
 
   // Sync selection when the selected note is deleted
   const handleDelete = useCallback((id: string) => {
+    // Push deletion to server before removing locally
+    const note = notes.find((n) => n.id === id);
+    if (note) {
+      syncPushRef.current([{
+        id: note.id,
+        content: note.content,
+        color: note.color,
+        pinned: note.pinned,
+        updated_at: Date.now(),
+        deleted: true,
+      }]);
+    }
     deleteNote(id);
     setSelectedId((prev) => (prev === id ? null : prev));
     setNewNoteId((prev) => (prev === id ? null : prev));
-  }, [deleteNote]);
+  }, [deleteNote, notes]);
 
   // Add a new blank note and open it for editing
   const handleAdd = useCallback(async () => {
@@ -53,6 +100,9 @@ export default function App() {
         onOpenAuth={() => setAuthModalOpen(true)}
         onLogout={auth.logout}
         authDisplayName={auth.user?.nickname ?? null}
+        syncStatus={syncStatus}
+        lastSyncAt={lastSyncAt}
+        onSyncNow={pullNow}
       />
 
       <div className="app-split">
