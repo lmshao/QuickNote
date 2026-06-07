@@ -159,13 +159,10 @@ export function useSync(
     setSyncStatus("pushing");
     try {
       const result = await pushNotes(t, payload);
+      // In bulk push, skipped means "already in sync" — not a conflict.
+      // Only log for debugging; don't create conflict copies.
       if (result.skipped.length > 0) {
-        for (const skippedId of result.skipped) {
-          const local = getLocalNote(skippedId);
-          if (local && local.content.trim()) {
-            await insertNoteSilent(buildConflictNote(local));
-          }
-        }
+        console.log("[sync] pushAll skipped (already in sync):", result.skipped.length);
       }
       // Update sync_since to prevent subsequent pull from re-fetching
       // notes that were just pushed — avoids false conflict copies
@@ -176,7 +173,7 @@ export function useSync(
       console.error("[sync] pushAll failed:", err);
       setSyncStatus("error");
     }
-  }, [getLocalNote, insertNoteSilent]);
+  }, []);
 
   // Auto-pull on token change (login)
   useEffect(() => {
