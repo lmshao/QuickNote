@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import type { Note, NoteColor } from "../types";
 import { NOTE_COLORS } from "../types";
+import ContextMenu, { type ContextMenuAction } from "./ContextMenu";
 import "./NoteCard.css";
 
 interface NoteCardProps {
@@ -35,6 +36,7 @@ export default function NoteCard({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(note.content);
   const [showColors, setShowColors] = useState(false);
+  const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const colors = NOTE_COLORS[note.color];
   const isConflictCopy = note.content.startsWith("⚠ 冲突副本");
@@ -63,10 +65,35 @@ export default function NoteCard({
     }
   };
 
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setCtxMenu({ x: e.clientX, y: e.clientY });
+  }, []);
+
+  const ctxActions: ContextMenuAction[] = [
+    {
+      label: note.pinned ? "取消固定" : "固定便签",
+      icon: "📌",
+      onClick: () => onTogglePin(note.id),
+    },
+    {
+      label: "更改颜色",
+      icon: "🎨",
+      onClick: () => setShowColors(true),
+    },
+    {
+      label: "删除便签",
+      icon: "🗑",
+      danger: true,
+      onClick: () => onDelete(note.id),
+    },
+  ];
+
   return (
     <div
       className={`note-card ${note.pinned ? "pinned" : ""}`}
       style={{ background: colors.bg, "--header-color": colors.header } as React.CSSProperties}
+      onContextMenu={handleContextMenu}
     >
       <div className="note-header">
         <div className="note-header-actions">
@@ -137,6 +164,15 @@ export default function NoteCard({
         {note.pinned && <span className="note-pinned-badge">已固定</span>}
         {isConflictCopy && <span className="note-conflict-badge" title="此便签为冲突副本，请检查内容并决定保留或删除">⚠ 冲突</span>}
       </div>
+
+      {ctxMenu && (
+        <ContextMenu
+          x={ctxMenu.x}
+          y={ctxMenu.y}
+          actions={ctxActions}
+          onClose={() => setCtxMenu(null)}
+        />
+      )}
     </div>
   );
 }

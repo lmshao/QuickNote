@@ -1,5 +1,7 @@
+import { useState, useCallback } from "react";
 import type { Note } from "../types";
 import { NOTE_COLORS } from "../types";
+import ContextMenu, { type ContextMenuAction } from "./ContextMenu";
 import "./NoteList.css";
 
 interface NoteListProps {
@@ -29,6 +31,16 @@ function getPreview(content: string): string {
 }
 
 export default function NoteList({ notes, selectedId, onSelect, onDelete }: NoteListProps) {
+  const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number; noteId: string } | null>(null);
+
+  const handleContextMenu = useCallback((e: React.MouseEvent, noteId: string) => {
+    e.preventDefault();
+    setCtxMenu({ x: e.clientX, y: e.clientY, noteId });
+  }, []);
+
+  const ctxActions: ContextMenuAction[] = ctxMenu
+    ? [{ label: "删除便签", icon: "🗑", danger: true, onClick: () => onDelete(ctxMenu.noteId) }]
+    : [];
   if (notes.length === 0) {
     return (
       <div className="note-list-empty">
@@ -49,6 +61,7 @@ export default function NoteList({ notes, selectedId, onSelect, onDelete }: Note
             className={`note-list-item ${note.id === selectedId ? "selected" : ""}`}
             style={{ borderLeftColor: colors.header }}
             onClick={() => onSelect(note.id)}
+            onContextMenu={(e) => handleContextMenu(e, note.id)}
           >
             <div className="note-list-item-top">
               <span className="note-list-item-title">
@@ -67,6 +80,14 @@ export default function NoteList({ notes, selectedId, onSelect, onDelete }: Note
           </div>
         );
       })}
+      {ctxMenu && (
+        <ContextMenu
+          x={ctxMenu.x}
+          y={ctxMenu.y}
+          actions={ctxActions}
+          onClose={() => setCtxMenu(null)}
+        />
+      )}
     </div>
   );
 }

@@ -111,7 +111,7 @@ export default function App() {
   }, [pushAllNow, pullNow, notes]);
 
   return (
-    <div className="app">
+    <div className="app" onContextMenu={(e) => e.preventDefault()}>
       <TitleBar
         onSearch={setSearchQuery}
         onAdd={handleAdd}
