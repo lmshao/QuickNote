@@ -1,7 +1,7 @@
 import type { AuthProviders, AuthUser } from "../types";
 
 const API_BASE_URL_STORAGE_KEY = "quicknote.api.baseUrl";
-const DEFAULT_API_BASE_URL = "http://x.lmshao.com:6968/api/v1";
+const DEFAULT_API_BASE_URL = "http://124.220.8.160:6968/api/v1";
 
 let runtimeApiBaseUrl = loadInitialApiBaseUrl();
 
