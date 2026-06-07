@@ -11,6 +11,7 @@ export interface UseSyncResult {
   syncStatus: SyncStatus;
   lastSyncAt: number | null;
   pushNow: (notes: SyncPushNote[]) => Promise<void>;
+  pushAllNow: (notes: Note[]) => Promise<void>;
   pullNow: () => Promise<void>;
 }
 
@@ -136,6 +137,43 @@ export function useSync(
     }
   }, [importNoteLocal, deleteNoteLocal, insertNoteSilent, getLocalNote]);
 
+  // --- push all local notes (called once after login) ---
+  const pushAllNow = useCallback(async (notes: Note[]) => {
+    const t = tokenRef.current;
+    if (!t || notes.length === 0) return;
+    const payload: SyncPushNote[] = [];
+    for (const n of notes) {
+      // Skip conflict copies — they are local-only
+      if (n.content.startsWith("⚠ 冲突副本")) continue;
+      payload.push({
+        id: n.id,
+        content: n.content,
+        color: n.color,
+        pinned: n.pinned,
+        updated_at: n.updatedAt,
+        deleted: false,
+      });
+    }
+    if (payload.length === 0) return;
+    setSyncStatus("pushing");
+    try {
+      const result = await pushNotes(t, payload);
+      if (result.skipped.length > 0) {
+        for (const skippedId of result.skipped) {
+          const local = getLocalNote(skippedId);
+          if (local && local.content.trim()) {
+            await insertNoteSilent(buildConflictNote(local));
+          }
+        }
+      }
+      setLastSyncAt(Date.now());
+      setSyncStatus("idle");
+    } catch (err) {
+      console.error("[sync] pushAll failed:", err);
+      setSyncStatus("error");
+    }
+  }, [getLocalNote, insertNoteSilent]);
+
   // Auto-pull on token change (login)
   useEffect(() => {
     if (token) {
@@ -150,7 +188,7 @@ export function useSync(
     return () => clearInterval(interval);
   }, [token, pullNow]);
 
-  return { syncStatus, lastSyncAt, pushNow, pullNow };
+  return { syncStatus, lastSyncAt, pushNow, pushAllNow, pullNow };
 }
 
 

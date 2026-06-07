@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import TitleBar from "./components/TitleBar";
 import NoteList from "./components/NoteList";
 import NoteDetail from "./components/NoteDetail";
@@ -39,7 +39,7 @@ export default function App() {
   notesRef.current = notes;
   const getLocalNote = useCallback((id: string) => notesRef.current.find((n) => n.id === id), []);
 
-  const { syncStatus, lastSyncAt, pushNow, pullNow } = useSync(
+  const { syncStatus, lastSyncAt, pushNow, pushAllNow, pullNow } = useSync(
     auth.token ?? null,
     importNote,
     deleteNote,
@@ -47,6 +47,17 @@ export default function App() {
     getLocalNote,
   );
   syncPushRef.current = pushNow;
+
+  // Push all local notes to server when user logs in
+  const prevTokenRef = useRef(auth.token);
+  useEffect(() => {
+    const prev = prevTokenRef.current;
+    prevTokenRef.current = auth.token;
+    // Only trigger when token appears (login), not on every change
+    if (auth.token && !prev) {
+      pushAllNow(notes);
+    }
+  }, [auth.token]); // eslint-disable-line react-hooks/exhaustive-deps
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newNoteId, setNewNoteId] = useState<string | null>(null);
@@ -94,6 +105,11 @@ export default function App() {
     setNewNoteId(null);
   }, []);
 
+  const handleSyncNow = useCallback(async () => {
+    await pushAllNow(notes);
+    await pullNow();
+  }, [pushAllNow, pullNow, notes]);
+
   return (
     <div className="app">
       <TitleBar
@@ -104,7 +120,7 @@ export default function App() {
         authDisplayName={auth.user?.nickname ?? null}
         syncStatus={syncStatus}
         lastSyncAt={lastSyncAt}
-        onSyncNow={pullNow}
+        onSyncNow={handleSyncNow}
       />
 
       <div className="app-split">
