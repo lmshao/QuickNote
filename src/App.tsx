@@ -48,14 +48,17 @@ export default function App() {
   );
   syncPushRef.current = pushNow;
 
-  // Push all local notes to server when user logs in
+  // Push-then-pull on login (sequenced to avoid race)
   const prevTokenRef = useRef(auth.token);
   useEffect(() => {
     const prev = prevTokenRef.current;
     prevTokenRef.current = auth.token;
     // Only trigger when token appears (login), not on every change
     if (auth.token && !prev) {
-      pushAllNow(notes);
+      (async () => {
+        await pushAllNow(notes);
+        await pullNow();
+      })();
     }
   }, [auth.token]); // eslint-disable-line react-hooks/exhaustive-deps
   const [searchQuery, setSearchQuery] = useState("");

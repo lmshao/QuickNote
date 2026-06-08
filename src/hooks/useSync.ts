@@ -72,7 +72,9 @@ export function useSync(
         }
       }
 
-      storeSince(Date.now());
+      // NOTE: Do NOT update since here — only pullNow manages the cursor.
+      // Updating since to Date.now() would skip server notes created
+      // between the last pull and now (see pushAllNow).
       setLastSyncAt(Date.now());
       setSyncStatus("idle");
     } catch (err) {
@@ -94,6 +96,7 @@ export function useSync(
 
       while (hasMore) {
         const result = await pullNotes(t, cursor);
+        let pageMaxUpdatedAt = 0;
 
         for (const remote of result.notes) {
           if (remote.deleted) {
@@ -117,21 +120,26 @@ export function useSync(
               pinned: remote.pinned,
             });
           }
+          if (remote.updated_at > pageMaxUpdatedAt) {
+            pageMaxUpdatedAt = remote.updated_at;
+          }
         }
         totalPulled += result.notes.length;
         hasMore = result.hasMore;
-        // Use server time to avoid clock-skew issues
-        if (result.serverTime > cursor) {
-          cursor = result.serverTime;
-        }
+        // Advance cursor to the max updated_at of this page,
+        // avoiding the gap between max(updated_at) and serverTime.
+        // Fall back to serverTime when the page is empty (should not happen).
+        cursor = pageMaxUpdatedAt > cursor ? pageMaxUpdatedAt : (result.serverTime > cursor ? result.serverTime : cursor);
       }
 
-      storeSince(cursor);
-      setLastSyncAt(Date.now());
-      setSyncStatus("idle");
+      // Only advance since if we actually pulled something.
+      // Advancing on empty pulls would drift the cursor into the future.
       if (totalPulled > 0) {
+        storeSince(cursor);
         console.log(`[sync] pulled ${totalPulled} notes`);
       }
+      setLastSyncAt(Date.now());
+      setSyncStatus("idle");
     } catch (err) {
       console.error("[sync] pull failed:", err);
       setSyncStatus("error");
@@ -159,28 +167,22 @@ export function useSync(
     setSyncStatus("pushing");
     try {
       const result = await pushNotes(t, payload);
-      // In bulk push, skipped means "already in sync" — not a conflict.
-      // Only log for debugging; don't create conflict copies.
-      if (result.skipped.length > 0) {
-        console.log("[sync] pushAll skipped (already in sync):", result.skipped.length);
+      const skippedCount = result?.skipped?.length ?? 0;
+      if (skippedCount > 0) {
+        console.log("[sync] pushAll skipped (already in sync):", skippedCount);
       }
-      // Update sync_since to prevent subsequent pull from re-fetching
-      // notes that were just pushed — avoids false conflict copies
-      storeSince(Date.now());
+      // Reset since to 0 so the subsequent pullNow does a full sync.
+      // This also clears any stale since value left by older buggy code.
+      storeSince(0);
       setLastSyncAt(Date.now());
       setSyncStatus("idle");
     } catch (err) {
       console.error("[sync] pushAll failed:", err);
+      // Even on failure, reset since to 0 so pullNow can do a full sync
+      storeSince(0);
       setSyncStatus("error");
     }
   }, []);
-
-  // Auto-pull on token change (login)
-  useEffect(() => {
-    if (token) {
-      pullNow();
-    }
-  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Periodic pull every 30s when authenticated
   useEffect(() => {
